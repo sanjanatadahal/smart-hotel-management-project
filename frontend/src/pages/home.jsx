@@ -8,7 +8,7 @@ import hotelRoom from "../assets/room img 1.webp";
 
 const slides = [
   {
-    image: hotelView,
+    image:  "./img 2.jpg",
     alt: "Hotel View",
     content: (
       <div className="welcome-text">
@@ -19,7 +19,7 @@ const slides = [
     ),
   },
   {
-    image: lobby,
+    image: "./lobby.jpg",
     alt: "Hotel Lobby",
     content: (
       <div className="slide-quote lobby-quote">
@@ -28,7 +28,7 @@ const slides = [
     ),
   },
   {
-    image: swimmingPool,
+    image: "./swimming pool.jpg",
     alt: "Swimming Pool",
     content: (
       <div className="slide-quote pool-quote">
@@ -37,7 +37,7 @@ const slides = [
     ),
   },
   {
-    image: hotelRoom,
+    image:  "./room img 1.webp",
     alt: "Hotel Room",
     content: (
       <div className="slide-quote room-quote">
