@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import "./home.css";
-
+import Navbar from "../components/Navbar";
 import hotelView from "../assets/img 2.jpg";
 import lobby from "../assets/lobby.jpg";
-import swimmingPool from "../assets/swmming pool.jpg";
+import swimmingPool from "../assets/swimming pool.jpg";
 import hotelRoom from "../assets/room img 1.webp";
 
 const slides = [
@@ -12,10 +12,11 @@ const slides = [
     alt: "Hotel View",
     content: (
       <div className="welcome-text">
-        <p>Welcome to the Hotel</p>
+        <p>Welcome to Hotel</p>
         <h1>The Riverside Treat</h1>
-        <p>A stay that will stay with you</p>
-      </div>
+
+        <p className="stay-quote">A stay that will always stay with you</p>
+        </div>
     ),
   },
   {
@@ -60,7 +61,9 @@ function Home() {
 
   useEffect(() => {
     const sliderTimer = setInterval(() => {
-      setCurrentSlide((previous) => (previous + 1) % slides.length);
+      setCurrentSlide(
+        (previous) => (previous + 1) % slides.length
+      );
     }, 4000);
 
     return () => clearInterval(sliderTimer);
@@ -88,10 +91,15 @@ function Home() {
 
   return (
     <>
+      {/* HERO SLIDER */}
+
       <section className="slider">
+        <Navbar/>
         <div
           className="slides"
-          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          style={{
+            transform: `translateX(-${currentSlide * 100}%)`,
+          }}
         >
           {slides.map((slide, index) => (
             <div className="slide" key={index}>
@@ -102,10 +110,16 @@ function Home() {
         </div>
       </section>
 
+      {/* BOOKING SECTION */}
+
       <section className="booking-section">
-        <form className="booking-bar" onSubmit={checkAvailability}>
+        <form
+          className="booking-bar"
+          onSubmit={checkAvailability}
+        >
           <div className="field">
             <label>📅 CHECK-IN DATE</label>
+
             <input
               type="date"
               name="checkIn"
@@ -117,6 +131,7 @@ function Home() {
 
           <div className="field">
             <label>🗓️ CHECK-OUT DATE</label>
+
             <input
               type="date"
               name="checkOut"
@@ -126,8 +141,9 @@ function Home() {
             />
           </div>
 
-          <div className="field small-field">
+          <div className="field">
             <label>👤 ADULTS</label>
+
             <input
               type="number"
               name="adults"
@@ -137,8 +153,9 @@ function Home() {
             />
           </div>
 
-          <div className="field small-field">
+          <div className="field">
             <label>🛏️ ROOMS</label>
+
             <input
               type="number"
               name="rooms"
@@ -148,8 +165,9 @@ function Home() {
             />
           </div>
 
-          <div className="field small-field">
+          <div className="field">
             <label>👶 KIDS</label>
+
             <input
               type="number"
               name="kids"
@@ -164,6 +182,55 @@ function Home() {
           </button>
         </form>
       </section>
+
+      {/* FOOTER */}
+
+      <footer className="hotel-footer">
+
+        <div className="footer-top">
+
+          <div className="footer-brand">
+            <h2>THE RIVERSIDE TREAT</h2>
+
+            <p>
+              Experience comfort, relaxation and memorable
+              stays at our riverside hotel.
+            </p>
+          </div>
+
+          <div className="footer-column">
+            <h3>EXPLORE</h3>
+
+            <a href="/">Home</a>
+            <a href="/about">About Us</a>
+            <a href="/contact">Contact Us</a>
+          </div>
+
+          <div className="footer-column contact-column">
+            <h3>CONTACT</h3>
+
+            <p>📍 Riverside Road, Hubli</p>
+            <p>📞 +91 98765 43210</p>
+            <p>✉️ riversidetreat@gmail.com</p>
+          </div>
+
+        </div>
+
+        <div className="footer-bottom">
+
+          <p>
+            © 2026 The Riverside Treat. All Rights Reserved.
+          </p>
+
+          <div className="social-links">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">Twitter</a>
+          </div>
+
+        </div>
+
+      </footer>
     </>
   );
 }
