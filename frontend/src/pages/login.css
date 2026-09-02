@@ -101,7 +101,7 @@
   border: none;
   border-radius: 10px;
 
-  background: #6f4e37;
+  background: black;
   color: white;
 
   font-size: 16px;
@@ -111,7 +111,7 @@
 }
 
 .login-btn:hover {
-  background: #513827;
+  background: #303030;
 }
 
 .signup-text {
@@ -121,10 +121,10 @@
 }
 
 .signup-text a {
-  color: #3b2418;
+  color: #333;
   font-weight: bold;
   text-decoration: none;
-}
+} 
 
 @media (max-width: 500px) {
   .login-box {
