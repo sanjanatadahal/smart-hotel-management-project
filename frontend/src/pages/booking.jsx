@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import QRCodeDisplay from "../components/QRCodeDisplay";
 import { api } from "../services/api";
+import { normalizeFacility } from "../data/facilityConfig";
 import "./booking.css";
 
 function Booking() {
@@ -61,6 +62,7 @@ function Booking() {
   // Flow states
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+  const [bookingConfirmation, setBookingConfirmation] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   // Load initial options from backend
@@ -80,14 +82,15 @@ function Booking() {
         }
 
         if (facilitiesRes.success) {
-          setAllFacilities(facilitiesRes.facilities);
-          const eligibleAddons = facilitiesRes.facilities.filter(
+          const normalizedFacilities = facilitiesRes.facilities.map(normalizeFacility);
+          setAllFacilities(normalizedFacilities);
+          const eligibleAddons = normalizedFacilities.filter(
             (f) => f.isRoomAddon
           );
           setRoomAddons(eligibleAddons);
 
-          if (!selectedFacilityId && facilitiesRes.facilities.length > 0) {
-            const firstSep = facilitiesRes.facilities.find((f) => f.isSeparateBooking);
+          if (!selectedFacilityId && normalizedFacilities.length > 0) {
+            const firstSep = normalizedFacilities.find((f) => f.isSeparateBooking);
             if (firstSep) {
               setSelectedFacilityId(firstSep._id);
               if (!facilityTimeSlot && firstSep.timeSlots?.length > 0) {
@@ -102,7 +105,7 @@ function Booking() {
     };
 
     loadInitialData();
-  }, []);
+  }, [facilityTimeSlot, selectedFacilityId, selectedRoomId]);
 
   // Update dynamic facility slot status when facility, date, or slot changes
   useEffect(() => {
@@ -185,29 +188,7 @@ function Booking() {
       return;
     }
 
-    try {
-      setIsProcessing(true);
-      const payload = {
-        roomId: selectedRoomId,
-        checkIn,
-        checkOut,
-        guests: guestsCount,
-        selectedFacilities: chosenAddonsList,
-        paymentMethod,
-      };
-
-      const res = await api.createRoomBooking(payload);
-      if (res.success) {
-        setConfirmedBooking({
-          type: "room",
-          data: res.booking,
-        });
-      }
-    } catch (err) {
-      setErrorMessage(err.message || "Failed to process room booking.");
-    } finally {
-      setIsProcessing(false);
-    }
+    setBookingConfirmation({ type: "room" });
   };
 
   // Submit Facility Booking
@@ -227,25 +208,24 @@ function Booking() {
       return;
     }
 
+    setBookingConfirmation({ type: "facility" });
+  };
+
+  const confirmBooking = async () => {
+    if (!bookingConfirmation) return;
     try {
       setIsProcessing(true);
-      const payload = {
-        facilityId: selectedFacilityId,
-        date: facilityDate,
-        timeSlot: facilityTimeSlot,
-        numberOfPeople: facilityPeople,
-        paymentMethod,
-      };
-
-      const res = await api.createFacilityBooking(payload);
+      const isRoom = bookingConfirmation.type === "room";
+      const res = isRoom
+        ? await api.createRoomBooking({ roomId: selectedRoomId, checkIn, checkOut, guests: guestsCount, selectedFacilities: chosenAddonsList, paymentMethod })
+        : await api.createFacilityBooking({ facilityId: selectedFacilityId, date: facilityDate, timeSlot: facilityTimeSlot, numberOfPeople: facilityPeople, paymentMethod });
       if (res.success) {
-        setConfirmedBooking({
-          type: "facility",
-          data: res.booking,
-        });
+        setConfirmedBooking({ type: bookingConfirmation.type, data: res.booking });
+        setBookingConfirmation(null);
       }
     } catch (err) {
-      setErrorMessage(err.message || "Failed to book facility.");
+      setBookingConfirmation(null);
+      setErrorMessage(err.message || "Failed to confirm the booking.");
     } finally {
       setIsProcessing(false);
     }
@@ -254,6 +234,36 @@ function Booking() {
   return (
     <div className="booking-page">
       <Navbar />
+
+      {bookingConfirmation && (
+        <div className="confirmation-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-booking-title">
+          <div className="confirmation-modal">
+            <p className="modal-eyebrow">PLEASE REVIEW</p>
+            <h2 id="confirm-booking-title">Confirm your booking</h2>
+            {bookingConfirmation.type === "room" ? (
+              <div className="confirmation-summary">
+                <p><span>Room</span><strong>{selectedRoom?.name || selectedRoom?.roomName || "Selected room"}</strong></p>
+                <p><span>Stay</span><strong>{new Date(checkIn).toLocaleDateString()} – {new Date(checkOut).toLocaleDateString()}</strong></p>
+                <p><span>Guests</span><strong>{guestsCount}</strong></p>
+                <p><span>Payment</span><strong>{paymentMethod}</strong></p>
+                <p className="confirmation-total"><span>Total</span><strong>₹{roomGrandTotal.toLocaleString()}</strong></p>
+              </div>
+            ) : (
+              <div className="confirmation-summary">
+                <p><span>Facility</span><strong>{selectedFacility?.name || "Selected facility"}</strong></p>
+                <p><span>Date & time</span><strong>{facilityDate} · {facilityTimeSlot}</strong></p>
+                <p><span>Guests</span><strong>{facilityPeople}</strong></p>
+                <p><span>Payment</span><strong>{paymentMethod}</strong></p>
+                <p className="confirmation-total"><span>Total</span><strong>₹{facilityGrandTotal.toLocaleString()}</strong></p>
+              </div>
+            )}
+            <div className="confirmation-modal-actions">
+              <button type="button" className="modal-cancel-btn" onClick={() => setBookingConfirmation(null)}>Go back</button>
+              <button type="button" className="modal-confirm-btn" onClick={confirmBooking} disabled={isProcessing}>{isProcessing ? "Confirming..." : "Confirm booking"}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* HEADER BANNER */}
       <section className="booking-header">
@@ -611,7 +621,7 @@ function Booking() {
                 /* SEPARATE FACILITY BOOKING FLOW */
                 <form onSubmit={handleFacilityBookingSubmit} className="flow-form">
                   <div className="form-section">
-                    <h3>1. Select Facility & Slot</h3>
+                    <h3>1. Select Facility & Date</h3>
                     <div className="input-field">
                       <label>Choose Facility</label>
                       <select
@@ -629,7 +639,7 @@ function Booking() {
                           .filter((f) => f.isSeparateBooking)
                           .map((f) => (
                             <option key={f._id} value={f._id}>
-                              {f.name} — {f.price === 0 ? "Complimentary" : `₹${f.price?.toLocaleString()} (${f.pricingType})`}
+                              {f.name} — {f.pricingType === "as_per_order" ? "As per your order" : f.price === 0 ? "Complimentary" : `₹${f.price?.toLocaleString()} (${f.pricingType})`}
                             </option>
                           ))}
                       </select>
@@ -660,20 +670,27 @@ function Booking() {
                       </div>
                     </div>
 
-                    <div className="input-field">
-                      <label>Available Time Slot</label>
-                      <select
-                        value={facilityTimeSlot}
-                        onChange={(e) => setFacilityTimeSlot(e.target.value)}
-                        required
-                      >
-                        {selectedFacility?.timeSlots?.map((slot, idx) => (
-                          <option key={idx} value={slot}>
-                            {slot}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    {selectedFacility?.isAllDayBooking ? (
+                      <div className="input-field">
+                        <label>Booking Duration</label>
+                        <input value={selectedFacility.availabilityLabel || "Full day"} readOnly />
+                      </div>
+                    ) : (
+                      <div className="input-field">
+                        <label>Available Time Slot</label>
+                        <select
+                          value={facilityTimeSlot}
+                          onChange={(e) => setFacilityTimeSlot(e.target.value)}
+                          required
+                        >
+                          {selectedFacility?.timeSlots?.map((slot, idx) => (
+                            <option key={idx} value={slot}>
+                              {slot}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
 
                     {/* LIVE DYNAMIC CAPACITY BADGE */}
                     {facilitySlotStatus && (
@@ -799,8 +816,8 @@ function Booking() {
                     <strong>{facilityDate}</strong>
                   </div>
                   <div className="summary-item">
-                    <span>Time Slot:</span>
-                    <strong>{facilityTimeSlot || "Select slot"}</strong>
+                    <span>{selectedFacility?.isAllDayBooking ? "Duration:" : "Time Slot:"}</span>
+                    <strong>{selectedFacility?.isAllDayBooking ? selectedFacility.availabilityLabel || "Full day" : facilityTimeSlot || "Select slot"}</strong>
                   </div>
                   <div className="summary-item">
                     <span>Guests:</span>
@@ -809,7 +826,9 @@ function Booking() {
                   <div className="summary-item">
                     <span>Rate:</span>
                     <strong>
-                      ₹{selectedFacility?.price?.toLocaleString()} ({selectedFacility?.pricingType})
+                      {selectedFacility?.pricingType === "as_per_order"
+                        ? "As per your order"
+                        : `₹${selectedFacility?.price?.toLocaleString()} (${selectedFacility?.pricingType})`}
                     </strong>
                   </div>
 

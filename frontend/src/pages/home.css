@@ -2,7 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, Arial;
+  font-family: "Manrope", sans-serif;
 }
 
 body {
@@ -71,6 +71,7 @@ body {
   margin-bottom: 25px;
   font-size: clamp(38px, 6vw, 76px);
   letter-spacing: 2px;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 600;
   color: #ffffff;
 }
@@ -87,7 +88,8 @@ body {
   z-index: 2;
   color: white;
   font-size: clamp(24px, 3.5vw, 48px);
-  font-weight: bold;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 600;
   text-shadow: 0 3px 14px rgba(0, 0, 0, 0.9);
 }
 
@@ -162,20 +164,20 @@ body {
   padding: 14px 22px;
   border: none;
   border-radius: 10px;
-  color: #1a120b;
-  background: #d4af37;
+  color: #f5efe6;
+  background: #5a2f20;
   cursor: pointer;
   font-weight: 700;
   font-size: 14px;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 12px rgba(90, 47, 32, 0.35);
   transition: all 0.25s ease;
 }
 
 .search-btn:hover {
-  background: #bfa035;
+  background: #3f1f15;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.45);
+  box-shadow: 0 6px 16px rgba(90, 47, 32, 0.45);
 }
 
 /* HOME INTRO & HIGHLIGHTS */
@@ -204,13 +206,14 @@ body {
   font-size: clamp(28px, 4vw, 42px);
   color: #2c1d11;
   margin: 12px 0 16px;
-  font-weight: 500;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 600;
 }
 
 .intro-divider {
   width: 60px;
   height: 3px;
-  background: #d4af37;
+  background: #5a2f20;
   margin: 0 auto 20px;
   border-radius: 2px;
 }
@@ -265,7 +268,8 @@ body {
   padding: 20px 22px 8px;
   font-size: 20px;
   color: #2c1d11;
-  font-weight: 600;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 700;
 }
 
 .highlight-card p {
@@ -297,7 +301,7 @@ body {
   padding: 70px 7% 30px;
   color: white;
   background: #19120c;
-  border-top: 4px solid #d4af37;
+  border-top: 4px solid #5a2f20;
 }
 
 .footer-top {
@@ -311,7 +315,8 @@ body {
   margin-bottom: 16px;
   font-size: 24px;
   letter-spacing: 3px;
-  font-weight: 600;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 700;
   color: #ffffff;
 }
 
@@ -325,7 +330,7 @@ body {
 .footer-badges {
   margin-top: 15px;
   font-size: 13px;
-  color: #d4af37;
+  color: #b38646;
 }
 
 .footer-column {
@@ -338,7 +343,7 @@ body {
   margin-bottom: 12px;
   font-size: 13px;
   letter-spacing: 2px;
-  color: #d4af37;
+  color: #b38646;
 }
 
 .footer-column a {
@@ -374,7 +379,7 @@ body {
 }
 
 .social-links a:hover {
-  color: #d4af37;
+  color: #b38646;
 }
 
 /* RESPONSIVE */

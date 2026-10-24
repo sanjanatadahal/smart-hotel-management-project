@@ -76,7 +76,7 @@
 }
 
 .nav-links a:hover {
-  color: #d4af37;
+  color: #b38646;
 }
 
 .auth-nav-actions {
@@ -105,8 +105,8 @@
 
 .nav-login-btn:hover {
   background: rgba(255, 255, 255, 0.25);
-  border-color: #d4af37;
-  color: #d4af37;
+  border-color: #b38646;
+  color: #b38646;
 }
 
 .login-dropdown-menu {
@@ -225,21 +225,21 @@
 }
 
 .book-now-nav-btn {
-  background: #d4af37 !important;
-  color: #1a120b !important;
+  background: #5a2f20 !important;
+  color: #f5efe6 !important;
   padding: 8px 18px;
   border-radius: 6px;
   font-weight: 700 !important;
   font-size: 14px !important;
   text-shadow: none !important;
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 14px rgba(90, 47, 32, 0.4);
   transition: all 0.3s ease;
 }
 
 .book-now-nav-btn:hover {
-  background: #e2be4b !important;
+  background: #3f1f15 !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.6);
+  box-shadow: 0 6px 18px rgba(90, 47, 32, 0.6);
 }
 
 .mobile-toggle {

@@ -60,6 +60,20 @@
   z-index: 10;
 }
 
+.confirmation-modal-overlay { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px; background: rgba(25, 16, 10, .68); backdrop-filter: blur(4px); }
+.confirmation-modal { width: min(100%, 440px); background: #fffdf9; border: 1px solid #dfcaa7; border-radius: 12px; padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
+.modal-eyebrow { color: #b38646; font-size: 11px; font-weight: 700; letter-spacing: 1.8px; margin-bottom: 7px; }
+.confirmation-modal h2 { font-family: "Cormorant Garamond", Georgia, serif; color: #2c1d11; font-size: 30px; margin-bottom: 20px; }
+.confirmation-summary { border-top: 1px solid #eadfce; border-bottom: 1px solid #eadfce; padding: 8px 0; }
+.confirmation-summary p { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; color: #665544; font-size: 14px; }
+.confirmation-summary strong { color: #2c1d11; text-align: right; }
+.confirmation-summary .confirmation-total { border-top: 1px dashed #dfcaa7; margin-top: 4px; padding-top: 14px; font-size: 16px; }
+.confirmation-summary .confirmation-total strong { color: #8b5a2b; font-size: 20px; }
+.confirmation-modal-actions { display: flex; gap: 12px; margin-top: 22px; }
+.confirmation-modal-actions button { flex: 1; padding: 12px; border-radius: 7px; font-weight: 700; cursor: pointer; }
+.modal-cancel-btn { border: 1px solid #d8c2a4; background: transparent; color: #5a2f20; }
+.modal-confirm-btn { border: 1px solid #5a2f20; background: #5a2f20; color: #fff8ef; }
+
 .booking-grid {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
@@ -308,19 +322,19 @@
 .btn-submit-booking {
   width: 100%;
   padding: 16px;
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
   border: none;
   border-radius: 10px;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 6px 18px rgba(90, 47, 32, 0.4);
   transition: all 0.25s;
 }
 
 .btn-submit-booking:hover:not(:disabled) {
-  background: #bfa035;
+  background: #3f1f15;
   transform: translateY(-2px);
 }
 
@@ -586,8 +600,8 @@
 }
 
 .btn-conf-new {
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
   border: none;
   padding: 12px 24px;
   border-radius: 8px;

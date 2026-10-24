@@ -3,9 +3,23 @@ import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
 import "./staff.css";
 
+function getStoredUser() {
+  try {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
+}
+
 function StaffDashboard() {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("reception"); // default; updated from user.role
+  const [currentUser] = useState(getStoredUser);
+  const [activeTab, setActiveTab] = useState(() => {
+    const user = getStoredUser();
+    return ["reception", "housekeeping", "kitchen"].includes(user?.role)
+      ? user.role
+      : "reception";
+  });
 
   // Reception state
   const [bookings, setBookings] = useState([]);
@@ -25,43 +39,42 @@ function StaffDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userStr = localStorage.getItem("user");
-    if (!userStr) {
+    if (!currentUser) {
       navigate("/staff/login");
       return;
     }
-    const user = JSON.parse(userStr);
-    setCurrentUser(user);
-
-    if (["reception", "housekeeping", "kitchen"].includes(user.role)) {
-      setActiveTab(user.role);
-    } else if (user.role === "admin") {
-      setActiveTab("reception");
-    }
 
     loadDashboardData();
-  }, []);
+  }, [currentUser, navigate]);
 
-  const loadDashboardData = async () => {
+  async function loadDashboardData() {
     try {
       setLoading(true);
-      const [bookingsRes, roomsRes, tasksRes, ordersRes] = await Promise.all([
-        api.getAllBookings(),
+      const role = currentUser?.role;
+      const [roomsRes, bookingsRes, tasksRes, ordersRes] = await Promise.all([
         api.getRooms(),
-        api.getCleaningTasks(),
-        api.getAllFoodOrders(),
+        ["reception", "admin"].includes(role) ? api.getAllBookings() : Promise.resolve(null),
+        ["housekeeping", "reception", "admin"].includes(role) ? api.getCleaningTasks() : Promise.resolve(null),
+        ["kitchen", "reception", "admin"].includes(role) ? api.getAllFoodOrders() : Promise.resolve(null),
       ]);
 
-      if (bookingsRes.success) setBookings(bookingsRes.bookings);
-      if (roomsRes.success) setRooms(roomsRes.rooms);
-      if (tasksRes.success) setCleaningTasks(tasksRes.tasks);
-      if (ordersRes.success) setFoodOrders(ordersRes.orders);
+      if (bookingsRes?.success) setBookings(bookingsRes.bookings);
+      if (roomsRes?.success) setRooms(roomsRes.rooms);
+      if (tasksRes?.success) setCleaningTasks(tasksRes.tasks);
+      if (ordersRes?.success) {
+        setFoodOrders(
+          ordersRes.orders.map((order) => ({
+            ...order,
+            orderStatus: order.orderStatus === "Delivered" ? "Delivered" : "New",
+          }))
+        );
+      }
     } catch (err) {
       console.error("Error loading staff data:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   // Reception Action: Check-in / Check-out
   const handleUpdateBookingStatus = async (bookingId, newStatus) => {
@@ -88,7 +101,7 @@ function StaffDashboard() {
     }
   };
 
-  // Kitchen Action: Order Status Update (New -> Preparing -> Ready -> Delivered)
+  // Kitchen Action: keep the order history and mark a new order as delivered.
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
       const res = await api.updateFoodOrderStatus(orderId, newStatus);
@@ -472,8 +485,8 @@ function StaffDashboard() {
                 <div className="panel-box">
                   <div className="panel-header">
                     <div>
-                      <h3>Live Kitchen Display System (KDS)</h3>
-                      <p className="panel-hint">Live in-room and table dining orders stream directly from guests</p>
+                      <h3>Kitchen Order History</h3>
+                      <p className="panel-hint">Review new guest orders and mark them delivered when complete.</p>
                     </div>
 
                     <div className="task-filter-chips">
@@ -488,18 +501,6 @@ function StaffDashboard() {
                         onClick={() => setOrderFilter("New")}
                       >
                         🆕 New Orders
-                      </button>
-                      <button
-                        className={`chip ${orderFilter === "Preparing" ? "active" : ""}`}
-                        onClick={() => setOrderFilter("Preparing")}
-                      >
-                        🍳 Preparing
-                      </button>
-                      <button
-                        className={`chip ${orderFilter === "Ready" ? "active" : ""}`}
-                        onClick={() => setOrderFilter("Ready")}
-                      >
-                        🔔 Ready for Delivery
                       </button>
                       <button
                         className={`chip ${orderFilter === "Delivered" ? "active" : ""}`}
@@ -546,26 +547,10 @@ function StaffDashboard() {
                         <div className="kds-ticket-footer">
                           {ord.orderStatus === "New" && (
                             <button
-                              className="btn-kds prep"
-                              onClick={() => handleUpdateOrderStatus(ord._id, "Preparing")}
-                            >
-                              🍳 Start Cooking
-                            </button>
-                          )}
-                          {ord.orderStatus === "Preparing" && (
-                            <button
-                              className="btn-kds ready"
-                              onClick={() => handleUpdateOrderStatus(ord._id, "Ready")}
-                            >
-                              🔔 Mark Order Ready
-                            </button>
-                          )}
-                          {ord.orderStatus === "Ready" && (
-                            <button
                               className="btn-kds deliver"
                               onClick={() => handleUpdateOrderStatus(ord._id, "Delivered")}
                             >
-                              🚀 Mark Delivered
+                              ✓ Mark as Delivered
                             </button>
                           )}
                           {ord.orderStatus === "Delivered" && (

@@ -77,8 +77,30 @@ function Rooms() {
   };
 
   useEffect(() => {
-    fetchRooms(checkIn, checkOut);
-  }, []);
+    let cancelled = false;
+
+    async function loadRooms() {
+      try {
+        setLoading(true);
+        const res = await api.getRooms(checkIn, checkOut);
+        if (!cancelled && res.success) {
+          setRooms(res.rooms);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Failed to load rooms:", err);
+          setErrorMessage("Could not load rooms. Please check backend connection.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadRooms();
+    return () => {
+      cancelled = true;
+    };
+  }, [checkIn, checkOut]);
 
   const handleFilterSubmit = (e) => {
     e.preventDefault();

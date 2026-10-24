@@ -10,9 +10,12 @@ function Register() {
     email: "",
     phone: "",
     password: "",
+    confirmPassword: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -26,15 +29,17 @@ function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage("");
+    if (formData.password !== formData.confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
     setIsLoading(true);
 
     try {
       const res = await api.register(formData);
       if (res.success) {
-        localStorage.setItem("token", res.token);
-        localStorage.setItem("user", JSON.stringify(res.user));
-        alert("Account registered successfully! Welcome to The Riverside Treat.");
-        navigate("/");
+        alert("Account registered successfully! Please sign in to continue.");
+        navigate("/login", { state: { registeredEmail: formData.email } });
       }
     } catch (err) {
       setErrorMessage(err.message || "Registration failed. Please try again.");
@@ -97,15 +102,18 @@ function Register() {
 
           <div className="input-group">
             <label>Create Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Minimum 6 characters"
-              value={formData.password}
-              onChange={handleChange}
-              minLength="6"
-              required
-            />
+            <div className="password-input-wrap">
+              <input type={showPassword ? "text" : "password"} name="password" placeholder="Minimum 6 characters" value={formData.password} onChange={handleChange} minLength="6" required />
+              <button type="button" className="password-toggle" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"}>{showPassword ? "🙈" : "👁"}</button>
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label>Confirm Password</label>
+            <div className="password-input-wrap">
+              <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" placeholder="Re-enter your password" value={formData.confirmPassword} onChange={handleChange} minLength="6" required />
+              <button type="button" className="password-toggle" onClick={() => setShowConfirmPassword((visible) => !visible)} aria-label={showConfirmPassword ? "Hide password" : "Show password"}>{showConfirmPassword ? "🙈" : "👁"}</button>
+            </div>
           </div>
 
           <button type="submit" disabled={isLoading} className="login-btn">

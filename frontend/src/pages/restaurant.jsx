@@ -19,16 +19,13 @@ function Restaurant() {
   const [notes, setNotes] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("UPI");
   const [orderConfirmed, setOrderConfirmed] = useState(null);
+  const [orderConfirmation, setOrderConfirmation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadFoodItems();
-  }, []);
-
-  const loadFoodItems = async () => {
+  async function loadFoodItems() {
     try {
       setLoading(true);
       const res = await api.getFoodItems(null, true);
@@ -40,7 +37,11 @@ function Restaurant() {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    void Promise.resolve().then(loadFoodItems);
+  }, []);
 
   const addToCart = (item) => {
     setCart((prev) => {
@@ -89,27 +90,27 @@ function Restaurant() {
       return;
     }
 
+    setOrderConfirmation(true);
+  };
+
+  const confirmOrder = async () => {
     try {
       setIsSubmitting(true);
       const payload = {
         roomNumber: deliveryType === "room" ? `Room #${roomNumber}` : "Table / Dining Deck",
-        items: cartItemsList.map((entry) => ({
-          foodItemId: entry.item._id,
-          name: entry.item.name,
-          price: entry.item.price,
-          quantity: entry.quantity,
-        })),
+        items: cartItemsList.map((entry) => ({ foodItemId: entry.item._id, name: entry.item.name, price: entry.item.price, quantity: entry.quantity })),
         totalAmount: cartTotal,
         paymentMethod,
         notes,
       };
-
       const res = await api.createFoodOrder(payload);
       if (res.success) {
         setOrderConfirmed(res.order);
         setCart({});
+        setOrderConfirmation(false);
       }
     } catch (err) {
+      setOrderConfirmation(false);
       setErrorMessage(err.message || "Failed to place food order.");
     } finally {
       setIsSubmitting(false);
@@ -126,6 +127,25 @@ function Restaurant() {
     <div className="restaurant-page">
       <Navbar />
 
+      {orderConfirmation && (
+        <div className="confirmation-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-order-title">
+          <div className="confirmation-modal">
+            <p className="modal-eyebrow">PLEASE REVIEW</p>
+            <h2 id="confirm-order-title">Confirm your food order</h2>
+            <div className="confirmation-summary">
+              {cartItemsList.map((entry) => <p key={entry.item._id}><span>{entry.quantity} × {entry.item.name}</span><strong>₹{(entry.item.price * entry.quantity).toLocaleString()}</strong></p>)}
+              <p><span>Delivery</span><strong>{deliveryType === "room" ? `Room #${roomNumber}` : "Restaurant / Deck Table"}</strong></p>
+              <p><span>Payment</span><strong>{paymentMethod}</strong></p>
+              <p className="confirmation-total"><span>Total</span><strong>₹{cartTotal.toLocaleString()}</strong></p>
+            </div>
+            <div className="confirmation-modal-actions">
+              <button type="button" className="modal-cancel-btn" onClick={() => setOrderConfirmation(false)}>Go back</button>
+              <button type="button" className="modal-confirm-btn" onClick={confirmOrder} disabled={isSubmitting}>{isSubmitting ? "Placing order..." : "Confirm order"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* BANNER */}
       <section className="restaurant-banner">
         <div className="banner-overlay">
@@ -140,31 +160,9 @@ function Restaurant() {
           /* ORDER CONFIRMATION */
           <div className="order-confirmed-card">
             <div className="order-conf-icon">🥘</div>
-            <h2>Order Placed with the Kitchen!</h2>
+            <h2>Order Sent to the Kitchen</h2>
             <p className="order-id-badge">Order ID: <strong>{orderConfirmed.orderId}</strong></p>
             <p className="order-dest">Delivery Destination: <strong>{orderConfirmed.roomNumber}</strong></p>
-
-            <div className="live-status-tracker">
-              <div className="status-step active">
-                <div className="circle">1</div>
-                <span>New</span>
-              </div>
-              <div className="status-line active"></div>
-              <div className="status-step active">
-                <div className="circle">2</div>
-                <span>Preparing</span>
-              </div>
-              <div className="status-line"></div>
-              <div className="status-step">
-                <div className="circle">3</div>
-                <span>Ready</span>
-              </div>
-              <div className="status-line"></div>
-              <div className="status-step">
-                <div className="circle">4</div>
-                <span>Delivered</span>
-              </div>
-            </div>
 
             <div className="order-summary-box">
               <h4>Order Breakdown:</h4>
@@ -182,7 +180,7 @@ function Restaurant() {
 
             <div className="order-actions">
               <Link to="/profile" className="btn-order-profile">
-                Track Live in My Profile
+                View Order History
               </Link>
               <button
                 type="button"

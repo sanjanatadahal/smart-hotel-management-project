@@ -52,23 +52,7 @@ function AdminDashboard() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const userStr = localStorage.getItem("user");
-    if (!userStr) {
-      navigate("/admin/login");
-      return;
-    }
-    const user = JSON.parse(userStr);
-    if (user.role !== "admin") {
-      alert("Access restricted to Hotel Administrators.");
-      navigate("/");
-      return;
-    }
-
-    loadAdminData();
-  }, []);
-
-  const loadAdminData = async () => {
+  async function loadAdminData() {
     try {
       setLoading(true);
       const [statsRes, roomsRes, bookingsRes, facRes, foodRes, staffRes, custRes] =
@@ -94,7 +78,23 @@ function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      navigate("/admin/login");
+      return;
+    }
+    const user = JSON.parse(userStr);
+    if (user.role !== "admin") {
+      alert("Access restricted to Hotel Administrators.");
+      navigate("/");
+      return;
+    }
+
+    void Promise.resolve().then(loadAdminData);
+  }, [navigate]);
 
   // ROOM ACTIONS
   const handleSaveRoom = async (e) => {

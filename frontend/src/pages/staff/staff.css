@@ -168,7 +168,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 3px solid #d4af37;
+  border-bottom: 3px solid #5a2f20;
 }
 
 .staff-top-left {
@@ -185,8 +185,8 @@
 }
 
 .staff-tag {
-  background: rgba(212, 175, 55, 0.2);
-  border: 1px solid #d4af37;
+  background: rgba(90, 47, 32, 0.2);
+  border: 1px solid #5a2f20;
   color: #dfcaa7;
   padding: 2px 8px;
   border-radius: 4px;

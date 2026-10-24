@@ -3,10 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import QRCodeDisplay from "../components/QRCodeDisplay";
 import { api } from "../services/api";
+import roomImage from "../assets/room img 1.webp";
 import "./profile.css";
 
 function Profile() {
-  const [activeTab, setActiveTab] = useState("roomBookings");
   const [user, setUser] = useState(null);
   const [roomBookings, setRoomBookings] = useState([]);
   const [facilityBookings, setFacilityBookings] = useState([]);
@@ -21,6 +21,44 @@ function Profile() {
 
   const navigate = useNavigate();
 
+  async function loadProfileData() {
+    try {
+      setLoading(true);
+      const [userResult, roomsResult, facilitiesResult, ordersResult] = await Promise.allSettled([
+        api.getCurrentUser(),
+        api.getMyBookings(),
+        api.getMyFacilityBookings(),
+        api.getMyFoodOrders(),
+      ]);
+
+      const userRes = userResult.status === "fulfilled" ? userResult.value : null;
+      const roomsRes = roomsResult.status === "fulfilled" ? roomsResult.value : null;
+      const facRes = facilitiesResult.status === "fulfilled" ? facilitiesResult.value : null;
+      const ordersRes = ordersResult.status === "fulfilled" ? ordersResult.value : null;
+
+      if (userRes?.success) {
+        setUser(userRes.user);
+        setName(userRes.user.name || "");
+        setPhone(userRes.user.phone || "");
+      }
+
+      if (roomsRes?.success) setRoomBookings(roomsRes.bookings);
+      if (facRes?.success) setFacilityBookings(facRes.bookings);
+      if (ordersRes?.success) {
+        setFoodOrders(
+          ordersRes.orders.map((order) => ({
+            ...order,
+            orderStatus: order.orderStatus === "Delivered" ? "Delivered" : "New",
+          }))
+        );
+      }
+    } catch (err) {
+      console.error("Error loading customer profile:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -28,34 +66,8 @@ function Profile() {
       return;
     }
 
-    loadProfileData();
-  }, []);
-
-  const loadProfileData = async () => {
-    try {
-      setLoading(true);
-      const [userRes, roomsRes, facRes, ordersRes] = await Promise.all([
-        api.getCurrentUser(),
-        api.getMyBookings(),
-        api.getMyFacilityBookings(),
-        api.getMyFoodOrders(),
-      ]);
-
-      if (userRes.success) {
-        setUser(userRes.user);
-        setName(userRes.user.name || "");
-        setPhone(userRes.user.phone || "");
-      }
-
-      if (roomsRes.success) setRoomBookings(roomsRes.bookings);
-      if (facRes.success) setFacilityBookings(facRes.bookings);
-      if (ordersRes.success) setFoodOrders(ordersRes.orders);
-    } catch (err) {
-      console.error("Error loading customer profile:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    void Promise.resolve().then(loadProfileData);
+  }, [navigate]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -107,51 +119,37 @@ function Profile() {
     <div className="profile-page">
       <Navbar />
 
-      {/* HEADER HERO */}
-      <section className="profile-header">
-        <div className="profile-header-content">
-          <div className="avatar-circle">
-            {user?.name ? user.name.charAt(0).toUpperCase() : "G"}
+      <div className="profile-layout">
+        <aside className="profile-sidebar">
+          <div className="profile-identity">
+            <div className="avatar-circle">{user?.name ? user.name.charAt(0).toUpperCase() : "G"}</div>
+            <h2>{user?.name || "Valued Guest"}</h2>
           </div>
-          <div className="profile-titles">
-            <h1>{user?.name || "Valued Guest"}</h1>
-            <p>✉️ {user?.email} • 📞 {user?.phone || "No phone registered"}</p>
-            <span className="guest-badge">🌟 Preferred Riverside Guest</span>
-          </div>
-          <button onClick={handleLogout} className="btn-profile-logout">
-            Log Out
-          </button>
-        </div>
-      </section>
 
-      <div className="profile-container">
-        {/* TAB NAVIGATION */}
-        <div className="profile-tabs">
-          <button
-            className={`tab-btn ${activeTab === "roomBookings" ? "active" : ""}`}
-            onClick={() => setActiveTab("roomBookings")}
-          >
-            🛏️ Stay Bookings ({roomBookings.length})
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "facilityBookings" ? "active" : ""}`}
-            onClick={() => setActiveTab("facilityBookings")}
-          >
-            🏊 Facility Reservations ({facilityBookings.length})
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "foodOrders" ? "active" : ""}`}
-            onClick={() => setActiveTab("foodOrders")}
-          >
-            🍽️ Dining Orders ({foodOrders.length})
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "settings" ? "active" : ""}`}
-            onClick={() => setActiveTab("settings")}
-          >
-            ⚙️ Account Details
-          </button>
-        </div>
+          <div className="personal-details">
+            <h3>Personal Profile</h3>
+            <p><span>Email</span>{user?.email || "Not available"}</p>
+            <p><span>Phone</span>{user?.phone || "Not added"}</p>
+            <form onSubmit={handleUpdateProfile} className="sidebar-profile-form">
+              {profileMessage && <div className="profile-alert">{profileMessage}</div>}
+              <label>Name</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+              <label>Phone number</label>
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" />
+              <button type="submit" className="btn-save-profile">Save details</button>
+            </form>
+          </div>
+
+          <button onClick={handleLogout} className="btn-profile-logout">↪ Log Out</button>
+        </aside>
+
+        <main className="profile-main">
+          <section className="profile-welcome-card">
+            <div>
+              <h1>Welcome back, {user?.name?.split(" ")[0] || "Guest"}! <span>👋</span></h1>
+              <p>Here is your overview of stays, bookings, dining, and preferences.</p>
+            </div>
+          </section>
 
         {loading ? (
           <div className="loading-state">
@@ -160,8 +158,35 @@ function Profile() {
           </div>
         ) : (
           <div className="tab-content-panel">
+            <div className="profile-overview">
+                <section className="overview-stay-card">
+                  <div className="overview-card-heading"><h3>Upcoming Stay</h3><span className="status-badge status-confirmed">{roomBookings[0]?.bookingStatus || "No stay booked"}</span></div>
+                  {roomBookings[0] ? (
+                    <div className="overview-stay-body">
+                      <img src={roomImage} alt="Guest room" />
+                      <div><h2>{roomBookings[0].roomName}</h2><p>Room No. {roomBookings[0].roomNumber || "To be assigned"}</p><span>👥 {roomBookings[0].guests || 1} Guest(s)</span></div>
+                      <div className="overview-date"><span>CHECK-IN</span><strong>{new Date(roomBookings[0].checkIn).toLocaleDateString()}</strong></div>
+                      <div className="overview-date"><span>CHECK-OUT</span><strong>{new Date(roomBookings[0].checkOut).toLocaleDateString()}</strong></div>
+                    </div>
+                  ) : <div className="overview-empty"><p>Your next riverside stay will appear here.</p><Link to="/rooms" className="btn-action-cta">Explore Rooms</Link></div>}
+                </section>
+
+                <h2 className="profile-history-title">My Booking History</h2>
+                <div className="overview-grid">
+                  <section className="overview-panel"><h3>Facility Booked</h3>{facilityBookings.length ? facilityBookings.map((booking) => <div className="compact-row" key={booking._id}><span>✦ {booking.facilityName}<small>{booking.numberOfPeople} guest{booking.numberOfPeople !== 1 ? "s" : ""} · {booking.timeSlot}</small></span><strong>{booking.date}</strong></div>) : <p className="panel-empty">No facilities booked yet.</p>}</section>
+                  <section className="overview-panel"><h3>Food Ordered</h3>{foodOrders.length ? foodOrders.map((order) => <div className="compact-row" key={order._id}><span>◫ Order #{order.orderId}<small>{order.items?.length || 0} item{order.items?.length !== 1 ? "s" : ""} · {order.orderStatus}</small></span><strong>₹{order.totalAmount?.toLocaleString()}</strong></div>) : <p className="panel-empty">No food ordered yet.</p>}</section>
+                </div>
+
+                <section className="profile-summary-cards"><div><span>Total Stays</span><strong>{roomBookings.length}</strong></div><div><span>Facility Bookings</span><strong>{facilityBookings.length}</strong></div><div><span>Total Orders</span><strong>{foodOrders.length}</strong></div><div><span>Total Spent</span><strong>₹{[...roomBookings, ...facilityBookings, ...foodOrders].reduce((sum, item) => sum + (item.totalAmount || 0), 0).toLocaleString()}</strong></div></section>
+              </div>
+            <section className="booked-services-heading">
+              <p>YOUR RESERVATIONS</p>
+              <h2>My Booking History</h2>
+              <span>All your stays, facility bookings, and dining orders are shown here.</span>
+            </section>
             {/* TAB 1: ROOM BOOKINGS */}
-            {activeTab === "roomBookings" && (
+            <section className="booked-service-section">
+              <h3>Room Stays <span>({roomBookings.length})</span></h3>
               <div className="bookings-tab">
                 {roomBookings.length === 0 ? (
                   <div className="empty-tab-state">
@@ -245,10 +270,11 @@ function Profile() {
                   </div>
                 )}
               </div>
-            )}
+            </section>
 
             {/* TAB 2: FACILITY BOOKINGS */}
-            {activeTab === "facilityBookings" && (
+            <section className="booked-service-section">
+              <h3>Facility Bookings <span>({facilityBookings.length})</span></h3>
               <div className="bookings-tab">
                 {facilityBookings.length === 0 ? (
                   <div className="empty-tab-state">
@@ -314,10 +340,11 @@ function Profile() {
                   </div>
                 )}
               </div>
-            )}
+            </section>
 
             {/* TAB 3: FOOD ORDERS */}
-            {activeTab === "foodOrders" && (
+            <section className="booked-service-section">
+              <h3>Dining Orders <span>({foodOrders.length})</span></h3>
               <div className="orders-tab">
                 {foodOrders.length === 0 ? (
                   <div className="empty-tab-state">
@@ -341,14 +368,6 @@ function Profile() {
                           </span>
                         </div>
 
-                        {/* LIVE PROGRESS STATUS BAR */}
-                        <div className="order-progress-stepper">
-                          <span className={["New", "Preparing", "Ready", "Delivered"].includes(ord.orderStatus) ? "step-dot active" : "step-dot"}>1. New</span>
-                          <span className={["Preparing", "Ready", "Delivered"].includes(ord.orderStatus) ? "step-dot active" : "step-dot"}>2. Preparing</span>
-                          <span className={["Ready", "Delivered"].includes(ord.orderStatus) ? "step-dot active" : "step-dot"}>3. Ready</span>
-                          <span className={ord.orderStatus === "Delivered" ? "step-dot active" : "step-dot"}>4. Delivered</span>
-                        </div>
-
                         <div className="order-items-table">
                           {ord.items.map((it, idx) => (
                             <div className="order-item-line" key={idx}>
@@ -367,51 +386,10 @@ function Profile() {
                   </div>
                 )}
               </div>
-            )}
-
-            {/* TAB 4: ACCOUNT SETTINGS */}
-            {activeTab === "settings" && (
-              <div className="settings-tab">
-                <form onSubmit={handleUpdateProfile} className="settings-form">
-                  <h3>Guest Profile Details</h3>
-                  {profileMessage && (
-                    <div className="profile-alert">{profileMessage}</div>
-                  )}
-
-                  <div className="input-field">
-                    <label>Full Name</label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="input-field">
-                    <label>Email Address</label>
-                    <input type="email" value={user?.email || ""} disabled />
-                    <small>Email address cannot be modified.</small>
-                  </div>
-
-                  <div className="input-field">
-                    <label>Contact Phone</label>
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 98765 43210"
-                    />
-                  </div>
-
-                  <button type="submit" className="btn-save-profile">
-                    Save Profile Changes
-                  </button>
-                </form>
-              </div>
-            )}
+            </section>
           </div>
         )}
+        </main>
       </div>
 
       {/* QR TICKET MODAL */}

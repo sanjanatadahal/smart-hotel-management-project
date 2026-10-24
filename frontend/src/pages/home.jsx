@@ -15,10 +15,10 @@ const slides = [
     alt: "Hotel View",
     content: (
       <div className="welcome-text">
-        <p>Welcome to Hotel</p>
+        <p>Welcome to</p>
         <h1>The Riverside Treat</h1>
         <p className="stay-quote">
-          A stay that will always stay with you
+          Timeless stays beside the river
         </p>
       </div>
     ),
@@ -28,7 +28,7 @@ const slides = [
     alt: "Hotel Lobby",
     content: (
       <div className="slide-quote lobby-quote">
-        Wait or Relax here
+        Arrive gracefully. Unwind completely.
       </div>
     ),
   },
@@ -37,7 +37,7 @@ const slides = [
     alt: "Swimming Pool",
     content: (
       <div className="slide-quote pool-quote">
-        Dive into Relaxation
+        Leisure, elevated by the water
       </div>
     ),
   },
@@ -46,7 +46,7 @@ const slides = [
     alt: "Hotel Room",
     content: (
       <div className="slide-quote room-quote">
-        Enjoy the River Side View
+        Wake to the river. Rest in refinement.
       </div>
     ),
   },
@@ -54,6 +54,7 @@ const slides = [
 
 function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isSlideTransitionEnabled, setIsSlideTransitionEnabled] = useState(true);
   const navigate = useNavigate();
 
   const [booking, setBooking] = useState({
@@ -66,11 +67,20 @@ function Home() {
 
   useEffect(() => {
     const sliderTimer = setInterval(() => {
-      setCurrentSlide((previous) => (previous + 1) % slides.length);
+      setCurrentSlide((previous) => previous + 1);
     }, 4500);
 
     return () => clearInterval(sliderTimer);
   }, []);
+
+  function handleSlideTransitionEnd() {
+    // The last item is a copy of the first slide. Reset invisibly after reaching it.
+    if (currentSlide === slides.length) {
+      setIsSlideTransitionEnabled(false);
+      setCurrentSlide(0);
+      requestAnimationFrame(() => setIsSlideTransitionEnabled(true));
+    }
+  }
 
   function updateBooking(event) {
     setBooking((previous) => ({
@@ -111,11 +121,13 @@ function Home() {
 
         <div
           className="slides"
+          onTransitionEnd={handleSlideTransitionEnd}
           style={{
             transform: `translateX(-${currentSlide * 100}%)`,
+            transition: isSlideTransitionEnabled ? undefined : "none",
           }}
         >
-          {slides.map((slide, index) => (
+          {[...slides, slides[0]].map((slide, index) => (
             <div className="slide" key={index}>
               <img src={slide.image} alt={slide.alt} />
               {slide.content}
@@ -193,13 +205,13 @@ function Home() {
       {/* WELCOME / ABOUT SECTION */}
       <section className="home-intro-section" id="about">
         <div className="home-intro-content">
-          <span className="section-subtitle">WELCOME TO LUXURY</span>
-          <h2>Where Nature Meets Riverside Hospitality</h2>
+          <span className="section-subtitle">RIVERSIDE HOSPITALITY, REFINED</span>
+          <h2>An Exceptional Escape, Shaped by the River</h2>
           <div className="intro-divider"></div>
           <p>
-            Nestled along the tranquil riverbanks, The Riverside Treat offers a sanctuary of refined elegance,
-            unhurried relaxation, and impeccable hospitality. Whether seeking a peaceful retreat, fine dining
-            with panoramic views, or tailored rejuvenation, our sanctuary is designed to leave an everlasting imprint.
+            Set beside tranquil riverbanks, The Riverside Treat is a place for unhurried days, thoughtful comfort,
+            and warm hospitality. From restorative stays and fine dining to quiet moments with a view, every detail
+            is composed to make your time here feel beautifully your own.
           </p>
         </div>
 
@@ -210,7 +222,7 @@ function Home() {
               <img src={riverSuiteImg} alt="Riverside Suites" />
             </div>
             <h3>Riverside Suites</h3>
-            <p>Spacious, elegantly appointed suites with private balconies overlooking calm waters.</p>
+            <p>Generous, beautifully appointed suites with private balconies overlooking tranquil water.</p>
             <Link to="/rooms" className="highlight-link">Explore Rooms →</Link>
           </div>
 
@@ -219,7 +231,7 @@ function Home() {
               <img src={swimmingPool} alt="Infinity Pool" />
             </div>
             <h3>Infinity Pool & Spa</h3>
-            <p>Temperature-controlled infinity pool and traditional Ayurvedic rejuvenation rituals.</p>
+            <p>Unhurried poolside moments and traditional Ayurvedic rituals for complete restoration.</p>
             <Link to="/facilities" className="highlight-link">View Services →</Link>
           </div>
 
@@ -228,7 +240,7 @@ function Home() {
               <img src={gardenImg} alt="Riverside Dining" />
             </div>
             <h3>Gourmet Dining</h3>
-            <p>Authentic regional delicacies and continental cuisine prepared by master chefs.</p>
+            <p>Regional delicacies and continental classics, thoughtfully prepared and beautifully served.</p>
             <Link to="/restaurant" className="highlight-link">View Menu →</Link>
           </div>
         </div>
@@ -240,8 +252,8 @@ function Home() {
           <div className="footer-brand">
             <h2>THE RIVERSIDE TREAT</h2>
             <p>
-              Experience comfort, relaxation and memorable
-              stays at our luxury riverside sanctuary.
+              A considered riverside retreat where warm service,
+              quiet luxury, and memorable stays come naturally.
             </p>
             <div className="footer-badges">
               <span>⭐️⭐️⭐️⭐️⭐️ 5-Star Riverside Resort</span>
@@ -251,9 +263,8 @@ function Home() {
           <div className="footer-column">
             <h3>EXPLORE</h3>
             <Link to="/">Home</Link>
-            <Link to="/rooms">Rooms & Suites</Link>
-            <Link to="/facilities">Facilities & Spa</Link>
-            <Link to="/restaurant">Restaurant & Dining</Link>
+            <Link to="/about">About Us</Link>
+            <Link to="/contact">Contact Us</Link>
             <Link to="/gallery">Photo Gallery</Link>
           </div>
 

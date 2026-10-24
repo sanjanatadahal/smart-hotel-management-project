@@ -8,7 +8,7 @@
   height: 48vh;
   min-height: 360px;
   position: relative;
-  background-image: url("../assets/hotel.jpg");
+  background-image: url("../assets/fine dine.jpg");
   background-size: cover;
   background-position: center;
 }
@@ -59,6 +59,20 @@
   position: relative;
   z-index: 10;
 }
+
+.confirmation-modal-overlay { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px; background: rgba(25, 16, 10, .68); backdrop-filter: blur(4px); }
+.confirmation-modal { width: min(100%, 440px); max-height: calc(100vh - 40px); overflow-y: auto; background: #fffdf9; border: 1px solid #dfcaa7; border-radius: 12px; padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
+.modal-eyebrow { color: #b38646; font-size: 11px; font-weight: 700; letter-spacing: 1.8px; margin-bottom: 7px; }
+.confirmation-modal h2 { font-family: "Cormorant Garamond", Georgia, serif; color: #2c1d11; font-size: 30px; margin-bottom: 20px; }
+.confirmation-summary { border-top: 1px solid #eadfce; border-bottom: 1px solid #eadfce; padding: 8px 0; }
+.confirmation-summary p { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; color: #665544; font-size: 14px; }
+.confirmation-summary strong { color: #2c1d11; text-align: right; }
+.confirmation-summary .confirmation-total { border-top: 1px dashed #dfcaa7; margin-top: 4px; padding-top: 14px; font-size: 16px; }
+.confirmation-summary .confirmation-total strong { color: #8b5a2b; font-size: 20px; }
+.confirmation-modal-actions { display: flex; gap: 12px; margin-top: 22px; }
+.confirmation-modal-actions button { flex: 1; padding: 12px; border-radius: 7px; font-weight: 700; cursor: pointer; }
+.modal-cancel-btn { border: 1px solid #d8c2a4; background: transparent; color: #5a2f20; }
+.modal-confirm-btn { border: 1px solid #5a2f20; background: #5a2f20; color: #fff8ef; }
 
 .dining-layout {
   display: grid;
@@ -212,8 +226,8 @@
 }
 
 .btn-add-cart:hover {
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
 }
 
 .qty-controls {
@@ -402,19 +416,19 @@
 .btn-order-submit {
   width: 100%;
   padding: 14px;
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
   border: none;
   border-radius: 8px;
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 14px rgba(90, 47, 32, 0.35);
   transition: all 0.25s;
 }
 
 .btn-order-submit:hover:not(:disabled) {
-  background: #bfa035;
+  background: #3f1f15;
   transform: translateY(-2px);
 }
 
@@ -573,8 +587,8 @@
 }
 
 .btn-order-more {
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
   border: none;
   padding: 11px 22px;
   border-radius: 8px;

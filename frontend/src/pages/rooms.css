@@ -137,8 +137,8 @@
 }
 
 .date-filter-btn {
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
   border: none;
   padding: 12px 20px;
   border-radius: 8px;
@@ -147,11 +147,11 @@
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.25s;
-  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 10px rgba(90, 47, 32, 0.3);
 }
 
 .date-filter-btn:hover {
-  background: #bfa035;
+  background: #3f1f15;
   transform: translateY(-2px);
 }
 
@@ -374,8 +374,8 @@
 }
 
 .btn-book:hover {
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
 }
 
 .btn-unavailable {
@@ -458,7 +458,7 @@
   color: white;
   text-align: center;
   margin-top: 60px;
-  border-top: 3px solid #d4af37;
+  border-top: 3px solid #5a2f20;
 }
 
 .rooms-ending p {

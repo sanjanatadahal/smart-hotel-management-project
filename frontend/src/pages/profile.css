@@ -38,8 +38,8 @@
   width: 78px;
   height: 78px;
   border-radius: 50%;
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
   font-size: 34px;
   font-weight: bold;
   display: flex;
@@ -68,9 +68,9 @@
 
 .guest-badge {
   display: inline-block;
-  background: rgba(212, 175, 55, 0.2);
-  border: 1px solid #d4af37;
-  color: #d4af37;
+  background: rgba(90, 47, 32, 0.2);
+  border: 1px solid #5a2f20;
+  color: #5a2f20;
   padding: 3px 10px;
   border-radius: 12px;
   font-size: 11.5px;
@@ -298,8 +298,8 @@
 }
 
 .btn-view-qr:hover {
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
 }
 
 .btn-cancel-res {
@@ -444,8 +444,8 @@
 }
 
 .btn-save-profile {
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -557,8 +557,8 @@
 .btn-ticket-print {
   width: 100%;
   padding: 12px;
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
   border: none;
   border-radius: 8px;
   font-weight: 700;
@@ -570,4 +570,283 @@
   .bookings-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Guest dashboard layout */
+.profile-page {
+  background: #f5f1eb;
+  padding-bottom: 64px;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 28px;
+  max-width: 1320px;
+  margin: 42px auto 0;
+  padding: 0 24px;
+}
+
+.profile-sidebar,
+.overview-stay-card,
+.overview-panel,
+.profile-summary-cards > div,
+.reservation-card,
+.order-history-card,
+.settings-form,
+.empty-tab-state {
+  background: #fffdf9;
+  border: 1px solid #e6dbcf;
+  box-shadow: 0 10px 28px rgba(55, 33, 22, 0.08);
+}
+
+.profile-sidebar {
+  align-self: start;
+  border-radius: 18px;
+  overflow: hidden;
+  position: sticky;
+  top: 92px;
+}
+
+.profile-identity {
+  padding: 28px 22px 24px;
+  text-align: center;
+  border-bottom: 1px solid #eee2d7;
+}
+
+.profile-identity .avatar-circle {
+  width: 98px;
+  height: 98px;
+  margin: 0 auto 15px;
+  background: linear-gradient(145deg, #7a4933, #3f2116);
+  border-color: #d8c2a4;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 42px;
+}
+
+.profile-identity h2 {
+  color: #2c1d11;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 25px;
+  margin-bottom: 7px;
+}
+
+.profile-identity p {
+  color: #786759;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.personal-details {
+  padding: 20px 22px 14px;
+}
+
+.personal-details h3,
+.booked-service-section > h3,
+.booked-services-heading h2 {
+  color: #2c1d11;
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.personal-details h3 {
+  font-size: 21px;
+  margin-bottom: 14px;
+}
+
+.personal-details > p {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0 0 11px;
+  color: #4d392c;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.personal-details > p span,
+.sidebar-profile-form label {
+  color: #887766;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.sidebar-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-top: 10px;
+  border-top: 1px solid #eee2d7;
+}
+
+.sidebar-profile-form input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #dfd3c5;
+  border-radius: 7px;
+  padding: 9px 10px;
+  color: #2c1d11;
+  font-size: 13px;
+}
+
+.sidebar-profile-form .btn-save-profile {
+  margin: 5px 0 0;
+  padding: 10px;
+}
+
+.profile-sidebar .profile-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 12px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.profile-sidebar .tab-btn {
+  width: 100%;
+  flex: none;
+  color: #4d392c;
+  text-align: left;
+  padding: 12px 14px;
+}
+
+.profile-sidebar .tab-btn.active {
+  background: #5a2f20;
+  color: #fff8ef;
+  box-shadow: none;
+}
+
+.profile-sidebar .btn-profile-logout {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 2px 12px 16px;
+  background: transparent;
+  border-color: #d8c2a4;
+  color: #5a2f20;
+  text-align: left;
+}
+
+.profile-sidebar .btn-profile-logout:hover {
+  background: #5a2f20;
+  border-color: #5a2f20;
+  color: #fff8ef;
+}
+
+.profile-main { min-width: 0; }
+
+.booked-services-heading {
+  margin: 36px 0 16px;
+  padding: 24px 0 0;
+  border-top: 1px solid #dfd3c5;
+}
+
+/* Histories are displayed in the overview panels above, without duplicate cards below. */
+.booked-services-heading,
+.booked-service-section { display: none; }
+
+.profile-history-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: #2c1d11;
+  font-size: 28px;
+  margin: 30px 0 -5px;
+}
+
+.booked-services-heading p {
+  color: #a8773e;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  margin-bottom: 5px;
+}
+
+.booked-services-heading h2 { font-size: 30px; margin-bottom: 5px; }
+.booked-services-heading span { color: #6c5a4e; font-size: 13px; }
+
+.booked-service-section { margin-top: 24px; }
+.booked-service-section > h3 { font-size: 23px; margin-bottom: 12px; }
+.booked-service-section > h3 span { color: #a8773e; font-size: 16px; }
+
+.profile-welcome-card {
+  min-height: 168px;
+  display: flex;
+  align-items: center;
+  padding: 32px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: linear-gradient(90deg, rgba(255, 253, 249, 0.98) 38%, rgba(255, 253, 249, 0.2)), url("../assets/room img 1.webp") right center / 54% auto no-repeat;
+  border: 1px solid #e6dbcf;
+  box-shadow: 0 10px 28px rgba(55, 33, 22, 0.08);
+}
+
+.profile-welcome-card h1,
+.overview-stay-card h2 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: #2c1d11;
+}
+
+.profile-welcome-card h1 { font-size: clamp(29px, 4vw, 39px); margin-bottom: 7px; }
+.profile-welcome-card p { color: #6c5a4e; font-size: 14px; }
+.profile-welcome-card span { font-family: sans-serif; font-size: 25px; }
+
+.overview-stay-card,
+.overview-panel { border-radius: 16px; padding: 22px; }
+.overview-card-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.overview-card-heading h3,
+.overview-panel h3 { color: #2c1d11; font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; }
+
+.overview-stay-body { display: grid; grid-template-columns: 190px minmax(180px, 1fr) 120px 120px; gap: 20px; align-items: center; }
+.overview-stay-body img { width: 190px; height: 120px; border-radius: 11px; object-fit: cover; }
+.overview-stay-body h2 { font-size: 24px; margin-bottom: 5px; }
+.overview-stay-body p, .overview-stay-body span { font-size: 13px; color: #6c5a4e; }
+.overview-date { border-left: 1px solid #dfd3c5; padding-left: 18px; display: flex; flex-direction: column; gap: 7px; }
+.overview-date span { color: #887766; font-size: 10px; font-weight: 700; letter-spacing: 0.7px; }
+.overview-date strong { color: #2c1d11; font-size: 13px; }
+.overview-empty { color: #665544; display: flex; gap: 16px; align-items: center; }
+
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+.compact-row { display: flex; justify-content: space-between; gap: 14px; border-bottom: 1px solid #f0e6d6; padding: 13px 0; color: #4d392c; font-size: 13px; }
+.compact-row strong { color: #5a2f20; font-size: 12px; white-space: nowrap; }
+.compact-row span { display: flex; flex-direction: column; gap: 3px; }
+.compact-row small { color: #887766; font-size: 11px; }
+.panel-empty { color: #887766; font-size: 13px; padding: 20px 0; }
+.text-action { border: 0; background: transparent; color: #5a2f20; padding: 14px 0 0; cursor: pointer; font-weight: 700; }
+
+.profile-summary-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px; }
+.profile-summary-cards > div { border-radius: 13px; padding: 18px; display: flex; flex-direction: column; gap: 7px; }
+.profile-summary-cards span { color: #776655; font-size: 12px; }
+.profile-summary-cards strong { color: #5a2f20; font-family: "Cormorant Garamond", Georgia, serif; font-size: 27px; }
+
+.tab-content-panel { min-width: 0; }
+.status-badge.status-confirmed { background: #edf5ed; color: #326338; }
+.status-new { background: #f6eadf; color: #7a3d24; }
+.status-delivered { background: #edf5ed; color: #326338; }
+.btn-view-qr, .btn-action-cta { background: #5a2f20; color: #fff8ef; }
+.btn-view-qr:hover, .btn-action-cta:hover { background: #3f1f15; color: #fff8ef; }
+.res-main-info h3, .order-card-header h4, .settings-form h3, .empty-tab-state h3 { font-family: "Cormorant Garamond", Georgia, serif; }
+
+@media (max-width: 980px) {
+  .profile-layout { grid-template-columns: 1fr; margin-top: 24px; }
+  .profile-sidebar { position: static; }
+  .profile-sidebar .btn-profile-logout { width: auto; margin: 0 12px 14px; }
+  .overview-stay-body { grid-template-columns: 150px 1fr; }
+  .overview-stay-body img { width: 150px; height: 105px; }
+  .overview-date { border-left: 0; padding-left: 0; }
+}
+
+@media (max-width: 640px) {
+  .profile-layout { padding: 0 14px; gap: 16px; }
+  .profile-welcome-card { min-height: 150px; padding: 22px; background-size: auto 100%; background-position: right; }
+  .profile-welcome-card > div { max-width: 72%; }
+  .overview-grid, .profile-summary-cards { grid-template-columns: 1fr; }
+  .overview-stay-body { grid-template-columns: 1fr; }
+  .overview-stay-body img { width: 100%; height: 165px; }
+  .overview-date { border-top: 1px solid #dfd3c5; padding-top: 10px; }
+  .overview-empty { align-items: flex-start; flex-direction: column; }
 }

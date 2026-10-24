@@ -8,6 +8,8 @@ import Restaurant from "./pages/restaurant";
 import Gallery from "./pages/gallery";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import About from "./pages/about";
+import Contact from "./pages/contact";
 
 // Customer Pages
 import Booking from "./pages/booking";
@@ -39,6 +41,8 @@ function App() {
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
 
         {/* Customer Protected Routes */}
         <Route

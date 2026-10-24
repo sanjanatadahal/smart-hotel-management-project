@@ -21,7 +21,7 @@ const facilitySchema = new mongoose.Schema(
     },
     pricingType: {
       type: String,
-      enum: ["per_person", "per_slot", "per_night", "complimentary"],
+      enum: ["per_person", "per_slot", "per_night", "complimentary", "as_per_order"],
       default: "per_person",
     },
     capacity: {
@@ -39,6 +39,10 @@ const facilitySchema = new mongoose.Schema(
         "06:00 PM - 08:00 PM",
         "08:00 PM - 10:00 PM",
       ],
+    },
+    isAllDayBooking: {
+      type: Boolean,
+      default: false,
     },
     isRoomAddon: {
       type: Boolean,

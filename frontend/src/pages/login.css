@@ -93,6 +93,10 @@
   box-shadow: 0 0 0 3px rgba(139, 101, 74, 0.12);
 }
 
+.password-input-wrap { position: relative; }
+.password-input-wrap input { padding-right: 46px; }
+.password-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; cursor: pointer; font-size: 17px; line-height: 1; padding: 6px; }
+
 .options {
   display: flex;
   justify-content: space-between;
@@ -140,8 +144,8 @@
 }
 
 .login-btn:hover:not(:disabled) {
-  background: #d4af37;
-  color: #1a120b;
+  background: #5a2f20;
+  color: #f5efe6;
 }
 
 .login-btn:disabled {
@@ -195,7 +199,7 @@
 }
 
 .portal-buttons a:hover {
-  color: #d4af37;
+  color: #5a2f20;
 }
 
 @media (max-width: 500px) {

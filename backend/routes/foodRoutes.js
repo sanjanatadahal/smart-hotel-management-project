@@ -143,7 +143,7 @@ router.get("/orders/my", protect, async (req, res) => {
 });
 
 // @route GET /api/food/orders
-// @desc Get live kitchen food orders (Kitchen, Staff, Admin)
+// @desc Get kitchen food order history (Kitchen, Staff, Admin)
 router.get("/orders", protect, authorizeRoles("kitchen", "reception", "admin"), async (req, res) => {
   try {
     const { status } = req.query;
@@ -158,7 +158,7 @@ router.get("/orders", protect, authorizeRoles("kitchen", "reception", "admin"), 
 });
 
 // @route PUT /api/food/orders/:id/status
-// @desc Update food order status (Kitchen: New -> Preparing -> Ready -> Delivered)
+// @desc Mark a kitchen order as delivered
 router.put("/orders/:id/status", protect, authorizeRoles("kitchen", "reception", "admin"), async (req, res) => {
   try {
     const { orderStatus } = req.body;
@@ -168,7 +168,7 @@ router.put("/orders/:id/status", protect, authorizeRoles("kitchen", "reception",
       return res.status(404).json({ success: false, message: "Order not found." });
     }
 
-    const validStatuses = ["New", "Preparing", "Ready", "Delivered"];
+    const validStatuses = ["New", "Delivered"];
     if (!validStatuses.includes(orderStatus)) {
       return res.status(400).json({ success: false, message: "Invalid order status." });
     }
